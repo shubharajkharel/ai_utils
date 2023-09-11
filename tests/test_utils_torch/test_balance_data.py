@@ -30,9 +30,14 @@ class TestBalancedDataset(unittest.TestCase):
         dummy_dataset = UnbalancedDataset(100)
 
         # Helper functions
-        count_class1 = lambda x: len([item for item in x if item[1] == 1])
-        count_class0 = lambda x: len([item for item in x if item[1] == 0])
-        counts = lambda x: (count_class0(x), count_class1(x))
+        def count_class1(x):
+            return len([item for item in x if item[1] == 1])
+
+        def count_class0(x):
+            return len([item for item in x if item[1] == 0])
+
+        def counts(x):
+            return count_class0(x), count_class1(x)
 
         with self.subTest("Test balanced dataset: None"):
             dataset = BalancedDataset(dummy_dataset)

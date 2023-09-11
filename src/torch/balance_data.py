@@ -1,6 +1,3 @@
-import logging
-import torch
-from torch.utils.data import Dataset
 import torch
 from torch.utils.data import Dataset
 from typing import Union, List
@@ -54,10 +51,9 @@ class BalancedDataset(Dataset):
             raise ValueError()
 
         if count_per_cls > minority_cls_count:
-            warn_message = (
-                f"Requested cls count {count_per_cls} > size of minority class {minority_cls_count},"
-                f" using {minority_cls_count} instead"
-            )
+            warn_message = f"Requested cls count {count_per_cls} > \
+                size of minority class {minority_cls_count}  \
+                using {minority_cls_count} instead"
             # logging.warning(warn_message)
             warnings.warn(warn_message)  # this is used in unittest
 

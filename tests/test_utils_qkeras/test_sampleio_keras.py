@@ -55,8 +55,8 @@ class TestKerasSampleIO(unittest.TestCase):
             try:
                 if os.path.exists(dir_path):
                     os.rmdir(dir_path)
-            except:  # prolly dir not empty
-                pass
+            except Exception as e:
+                raise e
 
 
 if __name__ == "__main__":

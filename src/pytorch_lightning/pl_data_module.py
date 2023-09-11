@@ -2,11 +2,8 @@ from typing import Optional
 from torch.utils.data import random_split
 import torch
 from torch.utils.data import Dataset, DataLoader
-import torch
-from torch.utils.data import Dataset
 
 import lightning.pytorch as pl
-from torch.utils.data import random_split, DataLoader
 
 
 class PlDataModule(pl.LightningDataModule):

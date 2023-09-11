@@ -1,18 +1,13 @@
 from src.qkeras.quantization import QuantizationConfig
 from keras.models import Model
-from keras.layers import Input, Flatten, Concatenate, ZeroPadding2D
+from keras.layers import Input, Flatten, Concatenate
 import torch
-from torchinfo import summary
-from pprint import pprint
-from qkeras import QDense, QActivation
-from keras.models import Sequential
-from keras.layers import MaxPooling2D, Flatten
-from qkeras import QConv2D, QDense, QActivation
+from qkeras import QDense
+from keras.layers import MaxPooling2D
+from qkeras import QConv2D
 import torch.nn as nn
 
-import torch
 import torch.nn.functional as F
-import torch.nn as nn
 
 
 # Define a simple fully connected neural network
@@ -50,7 +45,6 @@ class SimpleTorchCNNModel(nn.Module):
         self.fc = nn.Linear(320, output_size)
 
     def forward(self, x):
-        x_in = x
         x = F.relu(F.max_pool2d(self.conv1(x), 2))
         x = F.relu(F.max_pool2d(self.conv2(x), 2))
         x = torch.flatten(x, start_dim=1)

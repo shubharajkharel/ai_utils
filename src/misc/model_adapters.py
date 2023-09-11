@@ -4,7 +4,6 @@ import torchinfo
 import torch
 import numpy as np
 from abc import ABC, abstractmethod
-from src.misc.simple_models import SimpleTorchModel
 from tf2onnx.convert import from_keras
 
 # import keras2onnx  # Warning: Repo archived and not working
@@ -63,7 +62,8 @@ class TorchAdapter(BaseAdapter):
                 example_input = self.model.example_input
             else:
                 raise ValueError(
-                    "Example Input must be provided while saving to onnx, or the model must have an example_input attribute"
+                    "Example Input must be provided while saving to onnx, or the model \
+                        must have an example_input attribute"
                 )
         torch.onnx.export(model=self.model, args=example_input, f=file_path, **kwargs)
 
@@ -98,7 +98,10 @@ class QKerasAdapter(BaseAdapter):
 
 
 if __name__ == "__main__":
-    torch_model = TorchAdapter(SimpleTorchModule())
+    from misc.simple_models import SimpleTorchModel, create_simple_qkeras_model
+
+    torch_model = TorchAdapter(SimpleTorchModel())
+    qkeras_model = create_simple_qkeras_model()
 
     print(torch_model.summary())
     print(qkeras_model.summary())

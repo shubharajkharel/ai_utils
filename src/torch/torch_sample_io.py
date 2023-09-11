@@ -10,7 +10,7 @@ class PyTorchSampleIO(SampleIO):
             input_shape = self.model.input_shape
         else:
             raise NotImplementedError(
-                f"pytorch module requires input_shape attribute \
+                "pytorch module requires input_shape attribute \
                     because pytorch does not have a built-in way to \
                         get the input shape of a model"
             )

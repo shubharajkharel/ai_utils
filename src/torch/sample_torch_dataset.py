@@ -36,8 +36,6 @@ class SampleTorchDataset(Dataset):
 
 
 if __name__ == "__main__":
-    from utils.pytorch_lightning.pl_data_module import PlDataModule
-
     # Initialize the dataset
     model_torch = SimpleTorchCNNModel()
     dataset = SampleTorchDataset(model_torch)

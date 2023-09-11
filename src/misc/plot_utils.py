@@ -2,14 +2,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import List
 
-def plot_keys(data, keys: List = ["pulse", "no_pulse", "pulse_all"], rows=3, cols=1, **kwargs):
+
+def plot_keys(
+    data, keys: List = ["pulse", "no_pulse", "pulse_all"], rows=3, cols=1, **kwargs
+):
     plot_data = {}
     plot_data["values"] = [data[key] for key in keys]
     plot_data["titles"] = keys
     fig = grid_plot(plot_data, rows, cols, **kwargs)
     return fig
 
-def grid_plot(data, rows_count=1, cols_count=1,filename="grid_plot"):
+
+def grid_plot(data, rows_count=1, cols_count=1, filename="grid_plot"):
     num_plots = len(data["values"])
 
     # add more subplots if there are more data than could be fit in grid
@@ -92,6 +96,3 @@ if __name__ == "__main__":
 
     # Show the figure
     plt.show()
-
-
-

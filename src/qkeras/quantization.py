@@ -1,7 +1,5 @@
-from math import ceil, floor
 from dataclasses import dataclass
 from qkeras.quantizers import quantized_bits
-from typing import List, Tuple, Union
 
 
 @dataclass
