@@ -3,7 +3,8 @@ from torch.utils.data import random_split
 import torch
 from torch.utils.data import Dataset, DataLoader
 
-import lightning.pytorch as pl
+# import lightning.pytorch as pl
+import pytorch_lightning as pl
 
 
 class PlDataModule(pl.LightningDataModule):

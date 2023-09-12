@@ -4,10 +4,13 @@ from abc import ABC, abstractmethod
 
 
 class SampleIO(ABC):
-    def __init__(self, model, sample_input=None):
+    def __init__(self, model, sample_input=None,device = None):
         self.model = model
+        device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.sample_input = self.rand_input() if not sample_input else sample_input
+        self.sample_input = self.sample_input.to(device)
         self.sample_output = self.predict(self.batched_input(self.sample_input))
+        self.sample_output = self.sample_output.to(device)
 
     def batched_input(self, inp, batch_size=1):
         if isinstance(inp, np.ndarray):

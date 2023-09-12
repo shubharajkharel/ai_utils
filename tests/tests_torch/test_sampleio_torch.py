@@ -1,6 +1,6 @@
 import unittest
 import os
-from src.misc.simple_models import SimpleTorchCNNModel
+from torch.simple_torch_models import SimpleTorchCNNModel
 from src.torch.torch_sample_io import PyTorchSampleIO
 
 

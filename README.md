@@ -8,4 +8,5 @@ Collections of scripts I use in AI/ML projects.
 
 ```bash
    python3 -m install numpy onnx torchinfo torch2onnx matplotlib tensorflow QKeras torchinfo torch lightning tf2onnx 
+   
 ```

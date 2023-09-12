@@ -1,8 +1,8 @@
 import torch
 from torch.utils.data import Dataset
 
-from src.misc.simple_models import SimpleTorchCNNModel
-from src.pytorch_lightning.pl_data_module import PlDataModule
+from src.torch.simple_torch_models import SimpleTorchCNNModel
+from src.lightning.pl_data_module import PlDataModule
 from src.torch.torch_sample_io import PyTorchSampleIO
 
 
@@ -13,6 +13,7 @@ class SampleTorchDataset(Dataset):
         io_generator=PyTorchSampleIO,
         transform=None,
         batch_size=100,
+        device=None,
     ):
         self.model = model
         self.io_generator = io_generator
@@ -23,8 +24,9 @@ class SampleTorchDataset(Dataset):
             data, target = io_generator(model)
             self.data.append(data)
             self.targets.extend(target)
-        self.data = torch.stack(self.data)
-        self.targets = torch.stack(self.targets)
+        device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.data = torch.stack(self.data).to(device)
+        self.targets = torch.stack(self.targets).to(device)
 
     def __len__(self):
         return len(self.data)

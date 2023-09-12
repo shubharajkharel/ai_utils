@@ -1,5 +1,6 @@
 from src.qkeras.keras_sample_io import KerasSampleIO
 import onnx
+from src.qkeras.simple_qkeras_models import create_simple_qkeras_model
 import torchinfo
 import torch
 import numpy as np
@@ -32,6 +33,10 @@ class BaseAdapter(ABC):
 
     @abstractmethod
     def sample_io(self):
+        pass
+
+    @abstractmethod
+    def get_weights(self):
         pass
 
 
@@ -70,6 +75,12 @@ class TorchAdapter(BaseAdapter):
     def sample_io(self):
         raise NotImplementedError("Sample IO not implemented for Torch")
 
+    def get_weights(self):
+        weights_dict = {}
+        for name, param in self.model.named_parameters():
+            weights_dict[name] = param.data
+        return weights_dict
+
 
 class QKerasAdapter(BaseAdapter):
     def predict(self, data, channel_first=True):
@@ -96,9 +107,12 @@ class QKerasAdapter(BaseAdapter):
     def sample_io(self, sample_input=None):
         return iter(KerasSampleIO(self.model, sample_input))
 
+    def get_weights(self):
+        raise NotImplementedError("Weights not implemented for QKeras")
+
 
 if __name__ == "__main__":
-    from misc.simple_models import SimpleTorchModel, create_simple_qkeras_model
+    from torch.simple_torch_models import SimpleTorchModel
 
     torch_model = TorchAdapter(SimpleTorchModel())
     qkeras_model = create_simple_qkeras_model()

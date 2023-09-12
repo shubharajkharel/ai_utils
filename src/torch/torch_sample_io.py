@@ -24,7 +24,7 @@ class PyTorchSampleIO(SampleIO):
 
 
 if __name__ == "__main__":
-    from src.misc.simple_models import SimpleTorchCNNModel
+    from torch.simple_torch_models import SimpleTorchCNNModel
 
     model_torch = SimpleTorchCNNModel()
     in_sample, out_sample = PyTorchSampleIO(model_torch)

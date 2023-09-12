@@ -30,7 +30,7 @@ class KerasSampleIO(SampleIO):
 
 
 if __name__ == "__main__":
-    from src.misc.simple_models import create_simple_qkeras_model
+    from qkeras.simple_qkeras_models import create_simple_qkeras_model
 
     model_keras = create_simple_qkeras_model()
     in_sample, out_sample = KerasSampleIO(model_keras)

@@ -1,3 +1,11 @@
+# ### VisualStudioCode ###
+.vscode/*
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
+# !.vscode/*.code-snippets
+
 # Created by https://www.toptal.com/developers/gitignore/api/macos,linux,python,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,linux,python,visualstudiocode
 
@@ -220,14 +228,6 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
-
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
 .history/
