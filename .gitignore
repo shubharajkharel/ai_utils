@@ -2,6 +2,10 @@
 .vscode/*
 lightning_logs
 scratch*.ipynb
+# optuna
+*.db 
+*.pkl
+
 # !.vscode/settings.json
 # !.vscode/tasks.json
 # !.vscode/launch.json

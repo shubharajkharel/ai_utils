@@ -7,15 +7,12 @@ import torch.nn.functional as F
 
 # Define a simple fully connected neural network
 class SimpleTorchFCModel(nn.Module):
-    def __init__(self, input_shape=(10,), output_size=2, hidden_size=30, device=None):
+    def __init__(self, input_size=10, output_size=2, hidden_size=30, device=None):
         super(SimpleTorchFCModel, self).__init__()
-
-        self.input_size = input_shape
-        self.output_size = output_size
-        self.hidden_size = hidden_size
+        self.input_shape = (input_size,)  # used when creating dummy input
 
         #! Sequential class doesnt seems to work with hls4ml
-        self.a = nn.Linear(input_shape, hidden_size)
+        self.a = nn.Linear(input_size, hidden_size)
         self.b = nn.ReLU()
         self.c = nn.Linear(hidden_size, hidden_size)
         self.d = nn.ReLU()
@@ -43,7 +40,7 @@ class SimpleTorchCNNModel(nn.Module):
         self.fc = nn.Linear(320, output_size)
         device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.to(device)
-        
+
         self.example_input = torch.randn(1, 1, 28, 28, device=device)
 
     def forward(self, x):
