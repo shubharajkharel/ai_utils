@@ -1,5 +1,7 @@
 # ### VisualStudioCode ###
 .vscode/*
+lightning_logs
+scratch*.ipynb
 # !.vscode/settings.json
 # !.vscode/tasks.json
 # !.vscode/launch.json
