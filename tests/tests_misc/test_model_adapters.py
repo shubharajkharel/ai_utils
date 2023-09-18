@@ -1,6 +1,6 @@
 import unittest
-from qkeras.simple_qkeras_models import create_simple_qkeras_model
-from torch.simple_torch_models import SimpleTorchModel
+from src.qkeras.simple_qkeras_models import create_simple_qkeras_model
+from src.torch.simple_torch_models import SimpleTorchModel
 from src.misc.model_adapters import TorchAdapter, QKerasAdapter
 import os
 

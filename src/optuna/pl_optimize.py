@@ -1,12 +1,11 @@
 import pytorch_lightning as pl
 from fvcore.nn import FlopCountAnalysis
-from optuna.integration import PyTorchLightningPruningCallback
 
-from src.lightning.pl_data_module import PlDataModule
-from src.lightning.pl_module import PLModule
-from src.optuna.optimize import optimize, trial_instance_generator
-from src.torch.sample_torch_dataset import SampleTorchDataset
-from src.torch.simple_torch_models import SimpleTorchFCModel
+from ..lightning.pl_data_module import PlDataModule
+from ..lightning.pl_module import PLModule
+from ..optuna.optimize import optimize, trial_instance_generator
+from ..torch.sample_torch_dataset import SampleTorchDataset
+from ..torch.simple_torch_models import SimpleTorchFCModel
 
 
 # TODO: refactor

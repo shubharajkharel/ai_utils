@@ -68,7 +68,7 @@ class BalancedDataset(Dataset):
 
 
 if __name__ == "__main__":
-    from src.torch_dataset import WaveformDataset
+    from ..torch.torch_dataset import WaveformDataset
 
     dataset = WaveformDataset(use_scenario="classification")
     print(f"Dataset length: {len(dataset)}")

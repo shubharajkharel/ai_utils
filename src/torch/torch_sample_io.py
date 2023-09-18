@@ -1,4 +1,4 @@
-from src.misc.sample_io import SampleIO
+from ..misc.sample_io import SampleIO
 
 
 import torch

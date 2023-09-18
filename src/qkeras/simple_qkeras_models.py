@@ -1,7 +1,7 @@
 from keras.layers import Concatenate, Flatten, Input, MaxPooling2D
 from keras.models import Model
 from qkeras import QConv2D, QDense
-from src.qkeras.quantization import QuantizationConfig
+from .quantization import QuantizationConfig
 
 
 def create_simple_qkeras_model():

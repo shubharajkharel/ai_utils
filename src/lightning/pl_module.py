@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from src.misc.model_adapters import TorchAdapter
+from ..misc.model_adapters import TorchAdapter
 
 
 # TODO: seperate logging and unit testing
@@ -102,9 +102,9 @@ class PLModule(pl.LightningModule):
 
 
 if __name__ == "__main__":
-    from src.lightning.pl_data_module import PlDataModule
-    from src.torch.sample_torch_dataset import SampleTorchDataset
-    from src.torch.simple_torch_models import SimpleTorchCNNModel
+    from .pl_data_module import PlDataModule
+    from ..torch.sample_torch_dataset import SampleTorchDataset
+    from ..torch.simple_torch_models import SimpleTorchCNNModel
 
     nn_module = SimpleTorchCNNModel()
     dataset = SampleTorchDataset(nn_module)

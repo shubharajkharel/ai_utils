@@ -1,6 +1,6 @@
-from src.qkeras.keras_sample_io import KerasSampleIO
+from ..qkeras.keras_sample_io import KerasSampleIO
 import onnx
-from src.qkeras.simple_qkeras_models import create_simple_qkeras_model
+from ..qkeras.simple_qkeras_models import create_simple_qkeras_model
 import torchinfo
 import torch
 import numpy as np
@@ -112,7 +112,7 @@ class QKerasAdapter(BaseAdapter):
 
 
 if __name__ == "__main__":
-    from torch.simple_torch_models import SimpleTorchModel
+    from ..torch.simple_torch_models import SimpleTorchModel
 
     torch_model = TorchAdapter(SimpleTorchModel())
     qkeras_model = create_simple_qkeras_model()

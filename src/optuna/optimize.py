@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Union, Literal, Sequence
+from typing import Union, Sequence
 import pickle
 
 import optuna

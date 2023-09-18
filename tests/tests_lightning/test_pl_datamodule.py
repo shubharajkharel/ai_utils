@@ -3,7 +3,7 @@ import unittest
 import torch
 from torch.utils.data import Dataset
 
-from src.pytorch_lightning.pl_data_module import PlDataModule
+from src.lightning.pl_data_module import PlDataModule
 
 
 class SimpleDataset(Dataset):
