@@ -1,7 +1,7 @@
 from typing import Optional
-from ..torch.utils.data import random_split
+from torch.utils.data import random_split
 import torch
-from ..torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader
 
 # import lightning.pytorch as pl
 import pytorch_lightning as pl
