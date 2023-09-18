@@ -19,6 +19,7 @@ class PLModule(pl.LightningModule):
         example_input_array: Optional[Any] = None,
         loss_function: Optional[nn.Module] = nn.CrossEntropyLoss(),
         optimizer: Optional[torch.optim.Optimizer] = torch.optim.Adam,
+        save_graph: bool = False,
     ):
         super().__init__()
         self.model = model
@@ -29,6 +30,7 @@ class PLModule(pl.LightningModule):
         self.optimizer = optimizer
         if hasattr(self.model, "example_input"):  # I had been using this attribute
             self.example_input_array = self.model.example_input
+        self.save_graph = save_graph
 
     def backward(self, loss):
         # added to fix error: trying to backward through the graph a second time
@@ -83,17 +85,18 @@ class PLModule(pl.LightningModule):
         self.test_targets.append(target)
 
     def on_test_end(self):
-        # log model graph if example input is defined
-        if hasattr(self, "example_input_array"):
-            self.logger.experiment.add_graph(self, self.example_input_array)
-        else:
-            log_message = "Logging model graph requires an example input"
-            log_message += " ('example_input_array' or 'example_input')"
-            log_message += " defined in model. Skipping logging model graph."
-            logging.getLogger().info(log_message)
+        if self.save_graph:
+            # log model graph if example input is defined
+            if hasattr(self, "example_input_array"):
+                self.logger.experiment.add_graph(self, self.example_input_array)
+            else:
+                log_message = "Logging model graph requires an example input"
+                log_message += " ('example_input_array' or 'example_input')"
+                log_message += " defined in model. Skipping logging model graph."
+                logging.getLogger().info(log_message)
         # log pr curve
-        preds = torch.cat(self.test_preds)
-        targets = torch.cat(self.test_targets)
+        preds = torch.cat(self.test_preds).squeeze()
+        targets = torch.cat(self.test_targets).squeeze()
         self.logger.experiment.add_pr_curve(
             tag="pr_curve",
             labels=targets,
