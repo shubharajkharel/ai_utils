@@ -39,14 +39,25 @@ class BaseAdapter(ABC):
     def get_weights(self):
         pass
 
+    @abstractmethod
+    def train(self):
+        pass
+
+    @abstractmethod
+    def test(self):
+        pass
+
 
 class TorchAdapter(BaseAdapter):
-    def predict(self, data, channel_last=True):
+    def predict(self, data, channel_last=False):
         if channel_last and isinstance(data, np.ndarray):
             data = torch.tensor(
                 data.transpose(0, 3, 1, 2)
             )  # Convert channel_last to channel_first
         return self.model(data)
+
+    def __call__(self, data, channel_last=False):
+        return self.predict(data, channel_last)
 
     def count_parameters(self, trainable=True):
         return sum(
@@ -81,6 +92,31 @@ class TorchAdapter(BaseAdapter):
             weights_dict[name] = param.data
         return weights_dict
 
+    def train(self):
+        raise NotImplementedError("Training not implemented for Torch")
+
+    def test(self):
+        raise NotImplementedError("Testing not implemented for Torch")
+
+
+class PLAdapter(TorchAdapter):
+    def __init__(self, pl_module, pl_data_module=None, pl_trainer=None):
+        super().__init__(pl_module)
+        self.data_module = pl_data_module
+        self.trainer = pl_trainer
+
+    def train(self):
+        assert self.trainer is not None, "Trainer not provided"
+        assert self.data_module is not None, "DataModule not provided"
+        self.trainer.fit(model=self.model, datamodule=self.data_module)
+        return self
+
+    def test(self):
+        assert self.trainer is not None, "Trainer not provided"
+        assert self.data_module is not None, "DataModule not provided"
+        self.trainer.test(model=self.model, datamodule=self.data_module)
+        return self
+
 
 class QKerasAdapter(BaseAdapter):
     def predict(self, data, channel_first=True):
@@ -109,6 +145,12 @@ class QKerasAdapter(BaseAdapter):
 
     def get_weights(self):
         raise NotImplementedError("Weights not implemented for QKeras")
+
+    def train(self):
+        raise NotImplementedError("Training not implemented for QKeras")
+
+    def test(self):
+        raise NotImplementedError("Testing not implemented for QKeras")
 
 
 if __name__ == "__main__":
