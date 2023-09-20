@@ -15,10 +15,10 @@ class PLModule(pl.LightningModule):
     def __init__(
         self,
         model: nn.Module,
-        learning_rate: float = 0.0001,
+        learning_rate: Optional[float] = 0.0001,
         example_input_array: Optional[Any] = None,
-        loss: Optional[nn.Module] = nn.MSELoss(),
-        optimizer: Optional[torch.optim.Optimizer] = torch.optim.Adam,
+        loss: Optional[nn.Module] = None,
+        optimizer: Optional[torch.optim.Optimizer] = None,
         save_graph: bool = False,
     ):
         super().__init__()
@@ -26,15 +26,15 @@ class PLModule(pl.LightningModule):
         # learning rate must be set for tuner to find best lr
         self.learning_rate = learning_rate
         self.example_input_array = example_input_array
-        self.loss = loss
-        self.optimizer = optimizer
+        self.optimizer = optimizer if optimizer is not None else torch.optim.Adam
+        self.loss = loss if loss is not None else nn.MSELoss()
         if hasattr(self.model, "example_input"):  # I had been using this attribute
             self.example_input_array = self.model.example_input
         self.save_graph = save_graph
 
-    def backward(self, loss):
-        # added to fix error: trying to backward through the graph a second time
-        loss.backward(retain_graph=True)
+    # def backward(self, loss):
+    #     # added to fix error: trying to backward through the graph a second time
+    #     loss.backward(retain_graph=True)
 
     def configure_optimizers(self):
         return self.optimizer(self.parameters(), lr=self.learning_rate)
