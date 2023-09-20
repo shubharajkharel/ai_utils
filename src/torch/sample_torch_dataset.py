@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset
 
-from simple_torch_models import SimpleTorchCNNModel
+from .simple_torch_models import SimpleTorchCNNModel
 from ..lightning.pl_data_module import PlDataModule
 from torch_sample_io import PyTorchSampleIO
 

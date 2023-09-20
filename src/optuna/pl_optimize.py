@@ -9,7 +9,7 @@ from ..torch.simple_torch_models import SimpleTorchFCModel
 
 
 # TODO: refactor
-def pl_objective(trial):
+def pl_objective(trial, trial_objs_generator):
     objs = trial_objs_generator(trial)
     objs["trainer"].fit(objs["model"], objs["data_module"])
     val_loss = objs["trainer"].callback_metrics["val_loss"].item()
@@ -48,13 +48,13 @@ if __name__ == "__main__":
                 max_epochs=10, **trainer_params_generator(t)
             ),
             "data_module": lambda t: PlDataModule(
-                SampleTorchDataset(SimpleTorchFCModel()), seed=42
+                SampleTorchDataset(SimpleTorchFCModel()), random_seed=42
             ),
         }
     )
 
     optimize(
-        pl_objective,
+        pl_objective(trial_objs_generator=trial_objs_generator),
         study_name="example-study",
         n_trials=10,
         load_if_exists=False,

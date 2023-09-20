@@ -1,14 +1,17 @@
 import torch.nn as nn
-from src.nn_config import (
+from .nn_config import (
     FeedForwardNNConfig,
     NeuronLayer,
     Neuron,
 )
+from utils.src.lightning.pl_module import PLModule
+from utils.src.misc.model_adapters import TorchAdapter
 
 
 class TorchDynamicFC(nn.Module):
     def __init__(self, config: FeedForwardNNConfig, output_size: int = 1):
-        super(TorchDynamicFC, self).__init__()
+        super().__init__()
+        # super(TorchDynamicFC, self).__init__()
         self.layers = nn.ModuleList()
         for i, layer in enumerate(config.neuron_layers):
             layer_in = len(layer.neurons)
@@ -24,6 +27,12 @@ class TorchDynamicFC(nn.Module):
         for layer in self.layers:
             x = layer(x)
         return x
+
+
+# class PlDynamicFC(PLModule):
+#     def __init__(self, config: FeedForwardNNConfig, output_size: int = 1, **kwargs):
+#         model = TorchDynamicFC(config, output_size=output_size)
+#         super().__init__(model=model, **kwargs)
 
 
 if __name__ == "__main__":
