@@ -15,7 +15,7 @@ class PlDataModule(pl.LightningDataModule):
         dataset: Dataset,
         train_size: float = 0.7,
         val_size: float = 0.15,
-        random_seed: float = 42,
+        random_seed: int = 42,
         batch_size: int = 128,
         num_workers: int = 10,
         pin_memory: bool = True,
@@ -23,6 +23,7 @@ class PlDataModule(pl.LightningDataModule):
         persistent_workers: bool = True,
         stratify: Optional[bool] = False,
         stratification_labels: Optional[torch.Tensor] = None,
+        use_cache: bool = True,
         **data_loader_kwargs: dict,  # useful for stratified sampling
     ):
         super().__init__()
@@ -35,6 +36,7 @@ class PlDataModule(pl.LightningDataModule):
         self.val_size = val_size
         self.stratify = stratify
         self.stratification_labels = stratification_labels
+        self.use_cache = use_cache
 
         self.data_loader_kwargs = {
             **data_loader_kwargs,
@@ -62,13 +64,20 @@ class PlDataModule(pl.LightningDataModule):
         return DataLoader(self.train_data, **self.data_loader_kwargs)
 
     def val_dataloader(self):
-        return DataLoader(self.val_data, **self.data_loader_kwargs)
+        return DataLoader(
+            self.val_data, **{**self.data_loader_kwargs, "shuffle": False}
+        )
 
     def test_dataloader(self):
-        return DataLoader(self.test_data, **self.data_loader_kwargs)
+        # return DataLoader(self.test_data, **self.data_loader_kwargs)
+        return DataLoader(
+            self.test_data, **{**self.data_loader_kwargs, "shuffle": False}
+        )
 
     def predict_dataloader(self):
-        return DataLoader(self.predict_data, **self.data_loader_kwargs)
+        return DataLoader(
+            self.predict_data, **{**self.data_loader_kwargs, "shuffle": False}
+        )
 
     def _create_idx(self):
         # stage option is not used here
@@ -90,9 +99,10 @@ class PlDataModule(pl.LightningDataModule):
     def _create_stratified_idx(self):
         # TODO: very slow currently, using pickle for cache
         cache_file = "stratified_idx.pkl"
-        if os.path.exists(cache_file):
-            with open(cache_file, "rb") as f:
-                return pickle.load(f)
+        if self.use_cache:
+            if os.path.exists(cache_file):
+                with open(cache_file, "rb") as f:
+                    return pickle.load(f)
 
         if self.stratification_labels is None:
             raise ValueError(
