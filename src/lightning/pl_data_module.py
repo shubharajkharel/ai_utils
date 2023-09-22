@@ -24,6 +24,7 @@ class PlDataModule(pl.LightningDataModule):
         stratify: Optional[bool] = False,
         stratification_labels: Optional[torch.Tensor] = None,
         use_cache: bool = True,
+        drop_last: bool = True,
         **data_loader_kwargs: dict,  # useful for stratified sampling
     ):
         super().__init__()
@@ -45,6 +46,7 @@ class PlDataModule(pl.LightningDataModule):
             "pin_memory": pin_memory,  # faster transfer to GPU
             "shuffle": shuffle,  # reshuffle at every epoch
             "persistent_workers": persistent_workers,  # keep workers alive
+            "drop_last": True,  # drop last batch if smaller than batch_size
         }
 
         self.train_idx, self.val_idx, self.test_idx = (

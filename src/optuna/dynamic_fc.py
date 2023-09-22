@@ -5,22 +5,26 @@ from .nn_config import (
     Neuron,
 )
 from utils.src.lightning.pl_module import PLModule
+from typing import List
 from utils.src.misc.model_adapters import TorchAdapter
 
 
 class TorchDynamicFC(nn.Module):
-    def __init__(self, config: FeedForwardNNConfig, output_size: int = 1):
+    def __init__(self, widths: List[int], output_size: int = 1):
+        fc_config = FeedForwardNNConfig(
+            [NeuronLayer([Neuron()] * width) for width in widths]
+        )
         super().__init__()
         # super(TorchDynamicFC, self).__init__()
         self.layers = nn.ModuleList()
-        for i, layer in enumerate(config.neuron_layers):
+        for i, layer in enumerate(fc_config.neuron_layers):
             layer_in = len(layer.neurons)
             try:
-                layer_out = len(config.neuron_layers[i + 1].neurons)
+                layer_out = len(fc_config.neuron_layers[i + 1].neurons)
             except IndexError:  # Last layer
                 layer_out = output_size
             self.layers.append(nn.Linear(layer_in, layer_out))
-            if i < len(config.neuron_layers) - 1:
+            if i < len(fc_config.neuron_layers) - 1:
                 self.layers.append(nn.ReLU())
 
     def forward(self, x):
@@ -29,10 +33,10 @@ class TorchDynamicFC(nn.Module):
         return x
 
 
-# class PlDynamicFC(PLModule):
-#     def __init__(self, config: FeedForwardNNConfig, output_size: int = 1, **kwargs):
-#         model = TorchDynamicFC(config, output_size=output_size)
-#         super().__init__(model=model, **kwargs)
+class PlDynamicFC(PLModule):
+    def __init__(self, widths: List[int], output_size: int = 1, **kwargs):
+        model = TorchDynamicFC(widths, output_size=output_size)
+        super().__init__(model=model, **kwargs)
 
 
 if __name__ == "__main__":

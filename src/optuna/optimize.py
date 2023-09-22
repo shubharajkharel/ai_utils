@@ -27,6 +27,9 @@ def optimize(
     sampler: Union[optuna.samplers.BaseSampler, None] = None,
     save_study: bool = True,
     save_sampler: bool = True,
+    timeout: Union[float, None] = None,
+    n_jobs: int = 10,
+    
 ):
     # file names for saving and loading
     if load_if_exists or save_study or save_sampler:
@@ -60,7 +63,7 @@ def optimize(
         load_if_exists=load_if_exists,
         sampler=sampler,
     )
-    study.optimize(objective, n_trials=n_trials)
+    study.optimize(objective, n_trials=n_trials, timeout=timeout, n_jobs=n_jobs)
 
     if save_sampler:
         with open(sampler_path, "wb") as fout:
