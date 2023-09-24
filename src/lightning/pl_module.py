@@ -1,3 +1,5 @@
+import optuna
+from utils.src.misc.model_adapters import PLAdapter
 import logging
 from typing import Any, Optional
 
@@ -49,65 +51,19 @@ class PLModule(pl.LightningModule):
         y_hat = self.model(x)
         loss = self.loss(y_hat, y)
         self.log("train_loss", loss, on_step=True, on_epoch=True)
-        self.logger.experiment.add_scalars(
-            "losses", {"train_loss": loss}, self.global_step
-        )
         return loss
-
-    # def on_train_epoch_end(self) -> None:
-    #     # log histogram of weights
-    #     if isinstance(self.logger, pl.loggers.tensorboard.TensorBoardLogger):
-    #         weight_list = TorchAdapter(self).get_weights().values()
-    #         weights = [weight.flatten() for weight in weight_list]
-    #         self.logger.experiment.add_histogram(
-    #             tag="weights",
-    #             values=torch.cat(weights),
-    #             global_step=self.current_epoch,
-    #         )
-    #     else:
-    #         logging.getLogger().warn(
-    #             "Logging weight histogram for non-Tensorboard Logger not implemented"
-    #         )
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self.model(x)
         loss = self.loss(y_hat, y)
-        self.log("val_loss", loss, on_step=True, on_epoch=True)
-        self.logger.experiment.add_scalars(
-            "losses", {"val_loss": loss}, self.global_step
-        )
-
-    # def on_test_start(self):
-    #     # accumulate predictions and labels for pr curve log
-    #     self.test_preds = []
-    #     self.test_targets = []
+        self.log("val_loss", loss, on_step=False, on_epoch=True)
 
     def test_step(self, batch, batch_idx):
         data, target = batch
         preds = self.model(data)
         loss = self.loss(preds, target)
         self.log("test_loss", loss, on_step=False, on_epoch=True)
-        # self.test_preds.append(preds)
-        # self.test_targets.append(target)
-
-    # def on_test_end(self):
-    # if self.save_graph:
-    #     # log model graph if example input is defined
-    #     if hasattr(self, "example_input_array"):
-    #         self.logger.experiment.add_graph(self, self.example_input_array)
-    #     else:
-    #         log_message = "Logging model graph requires an example input"
-    #         log_message += " ('example_input_array' or 'example_input')"
-    #         log_message += " defined in model. Skipping logging model graph."
-    #         logging.getLogger().info(log_message)
-
-    # # log pr curve
-    # self.logger.experiment.add_pr_curve(
-    #     tag="pr_curve",
-    #     labels=targets,
-    #     predictions=preds,
-    # )
 
 
 if __name__ == "__main__":

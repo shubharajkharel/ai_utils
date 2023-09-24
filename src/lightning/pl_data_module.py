@@ -1,6 +1,6 @@
 import pickle
 import os
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
 import numpy as np
 import pytorch_lightning as pl
@@ -49,18 +49,36 @@ class PlDataModule(pl.LightningDataModule):
             "drop_last": True,  # drop last batch if smaller than batch_size
         }
 
+        if stratify and stratification_labels is None:
+            if hasattr(self.dataset, "labels"):
+                self.stratification_labels = self.dataset.labels
+            else:
+                raise ValueError(
+                    "When stratification is needed either: \n \
+                        1. Pass stratification_labels as a tensor of labels \n \
+                        2. Dataset must have a labels attribute"
+                )
+
         self.train_idx, self.val_idx, self.test_idx = (
             self._create_stratified_idx() if self.stratify else self._create_idx()
         )
 
-    def setup(self, stage: Optional[Literal["fit", "test", "predict"]] = None):
-        if stage == "fit":
-            self.train_data = Subset(self.dataset, self.train_idx)
-            self.val_data = Subset(self.dataset, self.val_idx)
-        elif stage == "test":
-            self.test_data = Subset(self.dataset, self.test_idx)
-        elif stage == "predict":
-            self.predict_data = Subset(self.dataset, self.test_idx)
+        self.train_data = Subset(self.dataset, self.train_idx)
+        self.val_data = Subset(self.dataset, self.val_idx)
+        self.predict_data = Subset(self.dataset, self.test_idx)
+        self.test_data = Subset(self.dataset, self.test_idx)
+
+    def setup(self, stage: Union[str, None] = None):
+        pass
+        # if stage == "fit":
+        #     self.train_data = Subset(self.dataset, self.train_idx)
+        #     self.val_data = Subset(self.dataset, self.val_idx)
+        # elif stage == "test":
+        #     self.test_data = Subset(self.dataset, self.test_idx)
+        # elif stage == "predict":
+        #     self.predict_data = Subset(self.dataset, self.test_idx)
+        # elif stage == "validate":
+        #     self.val_data = Subset(self.dataset, self.val_idx)
 
     def train_dataloader(self):
         return DataLoader(self.train_data, **self.data_loader_kwargs)
