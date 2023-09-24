@@ -1,3 +1,4 @@
+from utils.src.torch.torch_sample_io import PyTorchSampleIO
 import torch.nn as nn
 from .nn_config import (
     FeedForwardNNConfig,
@@ -36,6 +37,8 @@ class TorchDynamicFC(nn.Module):
 class PlDynamicFC(PLModule):
     def __init__(self, widths: List[int], output_size: int = 1, **kwargs):
         model = TorchDynamicFC(widths, output_size=output_size)
+        # model.input_shape = (widths[0],)
+        # model.example_input = PyTorchSampleIO(model=model) # TODO device error
         super().__init__(model=model, **kwargs)
 
 

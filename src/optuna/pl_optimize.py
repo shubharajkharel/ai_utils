@@ -13,15 +13,18 @@ def pl_objective(trial, trial_objs_generator):
     objs = trial_objs_generator(trial)
     objs["trainer"].fit(objs["model"], objs["data_module"])
     val_loss = objs["trainer"].callback_metrics["val_loss"].item()
-    sample_input = (
-        objs["data_module"]
-        .train_dataloader()
-        .dataset[0][0]
-        .unsqueeze(0)
-        .to(objs["model"].device)
-    )
-    flops = FlopCountAnalysis(objs["model"].model, (sample_input,)).total()
-    return val_loss, flops
+    # ==================== #
+    # FLOPS
+    # sample_input = (
+    #     objs["data_module"]
+    #     .train_dataloader()
+    #     .dataset[0][0]
+    #     .unsqueeze(0)
+    #     .to(objs["model"].device)
+    # )
+    # flops = FlopCountAnalysis(objs["model"].model, (sample_input,)).total()
+    # ==================== #
+    return val_loss
 
 
 if __name__ == "__main__":

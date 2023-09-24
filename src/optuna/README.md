@@ -13,6 +13,7 @@
 
 ## Recommended Samplers and Pruner
 
+- sampler [list](https://optuna.readthedocs.io/en/stable/reference/samplers/index.html)
 - For (**NON-ML tasks**)[https://github.com/optuna/optuna/wiki/Benchmarks-with-Kurobako]:
   - For `RandomSampler`, `MedianPruner` is the best.
   - For `TPESampler`, `HyperbandPruner` is the best.
