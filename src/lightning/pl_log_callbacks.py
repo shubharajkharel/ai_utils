@@ -1,3 +1,4 @@
+from typing import Union
 import warnings
 import logging
 import torch
@@ -6,20 +7,24 @@ from pytorch_lightning import Callback
 from utils.src.misc.model_adapters import TorchAdapter
 
 
-class CustomPLloggingCallback(Callback):
-    """Trainer logger needs to be Tensorboard Logger"""
+class TensorboardLogTestTrainLoss(Callback):
+    """Logs two scalars in same plot: train_loss and val_loss"""
 
-    def on_train_epoch_end(self, trainer, pl_module):
-        loss = trainer.callback_metrics.get("train_loss_epoch")
+    def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+        loss = outputs["loss"]
         pl_module.logger.experiment.add_scalars(
-            "losses", {"train_loss": loss}, trainer.current_epoch
+            "losses", {"train_loss": loss}, trainer.global_step
         )
 
     def on_validation_epoch_end(self, trainer, pl_module):
         val_loss = trainer.callback_metrics.get("val_loss")
         pl_module.logger.experiment.add_scalars(
-            "losses", {"val_loss": val_loss}, trainer.current_epoch
+            "losses", {"val_loss": val_loss}, trainer.global_step
         )
+
+
+class CustomPLloggingCallback(Callback):
+    """Trainer logger needs to be Tensorboard Logger"""
 
     def on_train_end(self, trainer, pl_module):
         if isinstance(pl_module.logger, pl.loggers.tensorboard.TensorBoardLogger):

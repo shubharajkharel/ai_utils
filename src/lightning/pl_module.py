@@ -50,7 +50,6 @@ class PLModule(pl.LightningModule):
         x, y = batch
         y_hat = self.model(x)
         loss = self.loss(y_hat, y)
-        self.log("train_loss", loss, on_step=True, on_epoch=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
