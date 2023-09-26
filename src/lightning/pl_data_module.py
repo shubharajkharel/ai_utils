@@ -45,7 +45,7 @@ class PlDataModule(pl.LightningDataModule):
             "num_workers": num_workers,  # number of subprocesses
             "pin_memory": pin_memory,  # faster transfer to GPU
             "shuffle": shuffle,  # reshuffle at every epoch
-            "persistent_workers": persistent_workers,  # keep workers alive
+            # "persistent_workers": persistent_workers,  # keep workers alive
             "drop_last": True,  # drop last batch if smaller than batch_size
         }
 
