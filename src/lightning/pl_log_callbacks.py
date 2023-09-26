@@ -4,7 +4,7 @@ import logging
 import torch
 import pytorch_lightning as pl
 from pytorch_lightning import Callback
-from utils.src.misc.model_adapters import TorchAdapter
+from utils.src.misc.model_adapters import PLAdapter
 
 
 class TensorboardLogTestTrainLoss(Callback):
@@ -23,12 +23,12 @@ class TensorboardLogTestTrainLoss(Callback):
         )
 
 
-class CustomPLloggingCallback(Callback):
-    """Trainer logger needs to be Tensorboard Logger"""
+class TensorboardLogAllWeigthsHist(Callback):
+    """Logs histogram of weight at end of training"""
 
     def on_train_end(self, trainer, pl_module):
         if isinstance(pl_module.logger, pl.loggers.tensorboard.TensorBoardLogger):
-            weight_list = TorchAdapter(pl_module).get_weights().values()
+            weight_list = PLAdapter(pl_module).get_weights().values()
             weights = [weight.flatten() for weight in weight_list]
             pl_module.logger.experiment.add_histogram(
                 tag="weights",
@@ -40,8 +40,11 @@ class CustomPLloggingCallback(Callback):
                 "Logging weight histogram for non-Tensorboard Logger not implemented"
             )
 
+
+class TensorboardLogGraph(Callback):
+    """Trainer logger needs to be Tensorboard Logger"""
+
     def on_test_end(self, trainer, pl_module):
-        # log model graph
         if hasattr(pl_module, "example_input_array"):
             pl_module.logger.experiment.add_graph(
                 pl_module, pl_module.example_input_array
@@ -51,25 +54,3 @@ class CustomPLloggingCallback(Callback):
             warning_msg += " ('example_input_array' or 'example_input')"
             warning_msg += " defined in model. Skipping logging model graph."
             raise warnings.warn(warning_msg)
-
-        # log histogram of weights
-        if isinstance(pl_module.logger, pl.loggers.tensorboard.TensorBoardLogger):
-            weight_list = TorchAdapter(pl_module).get_weights().values()
-            weights = [weight.flatten() for weight in weight_list]
-            pl_module.logger.experiment.add_histogram(
-                tag="weights",
-                values=torch.cat(weights),
-                global_step=self.current_epoch,
-            )
-        else:
-            warnings.warn(
-                "Logging weight histogram for non-Tensorboard Logger not implemented"
-            )
-
-
-# # log pr curve
-# self.logger.experiment.add_pr_curve(
-#     tag="pr_curve",
-#     labels=targets,
-#     predictions=preds,
-# )
