@@ -1,15 +1,9 @@
-import optuna
-from utils.src.misc.model_adapters import PLAdapter
-import logging
 from typing import Any, Optional
 
 # import lightning as pl # this giving error about lib typing_extensions
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-
-from ..misc.model_adapters import TorchAdapter
 
 
 # TODO: seperate logging and unit testing
@@ -66,9 +60,9 @@ class PLModule(pl.LightningModule):
 
 
 if __name__ == "__main__":
-    from .pl_data_module import PlDataModule
     from ..torch.sample_torch_dataset import SampleTorchDataset
     from ..torch.simple_torch_models import SimpleTorchCNNModel
+    from .pl_data_module import PlDataModule
 
     nn_module = SimpleTorchCNNModel()
     dataset = SampleTorchDataset(nn_module)

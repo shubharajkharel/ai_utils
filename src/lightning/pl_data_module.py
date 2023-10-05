@@ -1,6 +1,6 @@
 import pickle
 import os
-from typing import Literal, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 import pytorch_lightning as pl
@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, Dataset, Subset
 class PlDataModule(pl.LightningDataModule):
     def __init__(
         self,
-        dataset: Dataset,
+        dataset: Union[Dataset, None] = None,
         train_size: float = 0.7,
         val_size: float = 0.15,
         random_seed: int = 42,
@@ -25,19 +25,28 @@ class PlDataModule(pl.LightningDataModule):
         stratification_labels: Optional[torch.Tensor] = None,
         use_cache: bool = True,
         drop_last: bool = True,
+        train_dataset: Union[torch.utils.data.Dataset, None] = None,
+        test_dataset: Union[torch.utils.data.Dataset, None] = None,
+        val_dataset: Union[torch.utils.data.Dataset, None] = None,
+        # device: Union[ str, torch.device, None ] = None,  # only for mps, done auto for others
         **data_loader_kwargs: dict,  # useful for stratified sampling
     ):
         super().__init__()
         self.dataset = dataset
         self.random_seed = random_seed
-        # this is required from batch_size tuner
-        # https://lightning.ai/docs/pytorch/stable/advanced/training_tricks.html
-        self.batch_size = batch_size
-        self.train_size = train_size
-        self.val_size = val_size
         self.stratify = stratify
         self.stratification_labels = stratification_labels
         self.use_cache = use_cache
+        self.train_dataset = train_dataset
+        self.test_dataset = test_dataset
+        self.val_dataset = val_dataset
+        self.batch_size = batch_size  # batch_size is required from batch_size tuner
+        self.train_size = train_size
+        self.val_size = val_size
+        self.stratify = stratify
+        self.train_dataset = train_dataset
+        self.test_dataset = test_dataset
+        self.val_dataset = val_dataset
 
         self.data_loader_kwargs = {
             **data_loader_kwargs,
@@ -49,7 +58,13 @@ class PlDataModule(pl.LightningDataModule):
             "drop_last": True,  # drop last batch if smaller than batch_size
         }
 
-        if stratify and stratification_labels is None:
+        if (
+            self._dataset_needs_paritioning()
+        ):  # TODO: move this to functions acting on dataset
+            self._create_test_train_val_data()  # updates train/test/val data
+
+    def _create_test_train_val_data(self):
+        if self.stratify and self.stratification_labels is None:
             if hasattr(self.dataset, "labels"):
                 self.stratification_labels = self.dataset.labels
             else:
@@ -58,15 +73,36 @@ class PlDataModule(pl.LightningDataModule):
                         1. Pass stratification_labels as a tensor of labels \n \
                         2. Dataset must have a labels attribute"
                 )
-
         self.train_idx, self.val_idx, self.test_idx = (
             self._create_stratified_idx() if self.stratify else self._create_idx()
         )
+        self.train_dataset = Subset(self.dataset, self.train_idx)
+        self.val_dataset = Subset(self.dataset, self.val_idx)
+        self.predict_dataset = Subset(self.dataset, self.test_idx)
+        self.test_dataset = Subset(self.dataset, self.test_idx)
 
-        self.train_data = Subset(self.dataset, self.train_idx)
-        self.val_data = Subset(self.dataset, self.val_idx)
-        self.predict_data = Subset(self.dataset, self.test_idx)
-        self.test_data = Subset(self.dataset, self.test_idx)
+    def _dataset_needs_paritioning(self):
+        train_test_val_provided = all(
+            [
+                self.train_dataset is not None,
+                self.val_dataset is not None,
+                self.test_dataset is not None,
+            ]
+        )
+
+        dataset_provided = self.dataset is not None
+
+        if not dataset_provided and not train_test_val_provided:
+            raise ValueError(
+                "Either dataset or train_data, val_data, test_data must be provided"
+            )
+
+        if dataset_provided and train_test_val_provided:
+            raise ValueError(
+                "Only one of dataset or train/test/val data must be provided"
+            )
+
+        return True if dataset_provided else False
 
     def setup(self, stage: Union[str, None] = None):
         pass
@@ -81,22 +117,22 @@ class PlDataModule(pl.LightningDataModule):
         #     self.val_data = Subset(self.dataset, self.val_idx)
 
     def train_dataloader(self):
-        return DataLoader(self.train_data, **self.data_loader_kwargs)
+        return DataLoader(self.train_dataset, **self.data_loader_kwargs)
 
     def val_dataloader(self):
         return DataLoader(
-            self.val_data, **{**self.data_loader_kwargs, "shuffle": False}
+            self.val_dataset, **{**self.data_loader_kwargs, "shuffle": False}
         )
 
     def test_dataloader(self):
         # return DataLoader(self.test_data, **self.data_loader_kwargs)
         return DataLoader(
-            self.test_data, **{**self.data_loader_kwargs, "shuffle": False}
+            self.test_dataset, **{**self.data_loader_kwargs, "shuffle": False}
         )
 
     def predict_dataloader(self):
         return DataLoader(
-            self.predict_data, **{**self.data_loader_kwargs, "shuffle": False}
+            self.predict_dataset, **{**self.data_loader_kwargs, "shuffle": False}
         )
 
     def _create_idx(self):
