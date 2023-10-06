@@ -1,11 +1,11 @@
 import unittest
 import torch
-from src.nn_config import (
+from xas.nn_config import (
     FeedForwardNNConfig,
     NeuronLayer,
     Neuron,
 )
-from src.torch_dynamic_fc import TorchDynamicFC
+from xas.torch_dynamic_fc import TorchDynamicFC
 
 
 class TestTorchConfigurableFC(unittest.TestCase):

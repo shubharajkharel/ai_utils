@@ -1,5 +1,5 @@
 import unittest
-from src.nn_config import QuantizationConfig, Neuron, NeuronLayer
+from xas.nn_config import QuantizationConfig, Neuron, NeuronLayer
 
 
 class TestNeuronLayer(unittest.TestCase):

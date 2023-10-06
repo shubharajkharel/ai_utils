@@ -131,8 +131,9 @@ class PlDataModule(pl.LightningDataModule):
         )
 
     def predict_dataloader(self):
+        # TODO: remove the proxy
         return DataLoader(
-            self.predict_dataset, **{**self.data_loader_kwargs, "shuffle": False}
+            self.test_dataset, **{**self.data_loader_kwargs, "shuffle": False}
         )
 
     def _create_idx(self):
