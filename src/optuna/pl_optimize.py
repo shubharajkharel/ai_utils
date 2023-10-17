@@ -1,4 +1,5 @@
-import pytorch_lightning as pl
+# import pytorch_lightning as pl
+import lightning as pl
 from fvcore.nn import FlopCountAnalysis
 
 from ..lightning.pl_data_module import PlDataModule

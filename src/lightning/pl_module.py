@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
-# import lightning as pl # this giving error about lib typing_extensions
-import pytorch_lightning as pl
+import lightning as pl # this giving error about lib typing_extensions
+# import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 

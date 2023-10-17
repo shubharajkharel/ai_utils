@@ -3,7 +3,8 @@ import os
 from typing import Optional, Union
 
 import numpy as np
-import pytorch_lightning as pl
+# import pytorch_lightning as pl
+import lightning as pl
 import torch
 from sklearn.model_selection import StratifiedShuffleSplit
 from torch.utils.data import DataLoader, Dataset, Subset
