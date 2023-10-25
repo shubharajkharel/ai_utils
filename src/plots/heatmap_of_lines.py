@@ -16,6 +16,7 @@ def heatmap_of_lines(
     ylabel="values",
     norm_data: Union[Literal["minmax"], None] = None,
     norm_heatmap: Union[matplotlib.colors.Normalize, None] = LogNorm,
+    aspect=0.618,  # golden ratio
 ):
     """
     Generate a heatmap from multiple lines of data.
@@ -52,8 +53,13 @@ def heatmap_of_lines(
     for i, j in zip(x_idx, y_idx):
         heatmap[i, j] += 1
 
-    fig = plt.figure(figsize=(8, 6))
-    plt.imshow(heatmap, origin="lower", cmap=cmap, norm=norm_heatmap())
+    plt.imshow(
+        heatmap,
+        origin="lower",
+        cmap=cmap,
+        norm=norm_heatmap(),
+        aspect=aspect,
+    )
     plt.colorbar()
 
     plt.title(title)
@@ -65,8 +71,6 @@ def heatmap_of_lines(
         (yticks_values - data.min()) / (data.max() - data.min()) * width
     ).astype(int)
     plt.yticks(yticks_indices, [f"{val:.2f}" for val in yticks_values])
-
-    return fig
 
 
 if __name__ == "__main__":
