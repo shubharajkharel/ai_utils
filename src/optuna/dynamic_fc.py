@@ -35,6 +35,8 @@ class TorchDynamicFC(nn.Module):
 class PlDynamicFC(PLModule):
     def __init__(self, widths: List[int], output_size: int = 1, **kwargs):
         model = TorchDynamicFC(widths, output_size=output_size)
+        self.widths = widths
+        self.output_size = output_size
         # model.input_shape = (widths[0],)
         # model.example_input = PyTorchSampleIO(model=model) # TODO device error
         super().__init__(model=model, **kwargs)

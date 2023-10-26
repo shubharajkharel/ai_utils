@@ -1,6 +1,7 @@
 from typing import Any, Optional
 
-import lightning as pl # this giving error about lib typing_extensions
+import lightning as pl  # this giving error about lib typing_extensions
+
 # import pytorch_lightning as pl
 import torch
 import torch.nn as nn
@@ -27,6 +28,7 @@ class PLModule(pl.LightningModule):
         if hasattr(self.model, "example_input"):  # I had been using this attribute
             self.example_input_array = self.model.example_input
         self.save_graph = save_graph
+        # self.save_hyperparameters()
 
     # def backward(self, loss):
     #     # added to fix error: trying to backward through the graph a second time
