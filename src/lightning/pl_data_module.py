@@ -44,10 +44,6 @@ class PlDataModule(pl.LightningDataModule):
         self.batch_size = batch_size  # batch_size is required from batch_size tuner
         self.train_size = train_size
         self.val_size = val_size
-        self.stratify = stratify
-        self.train_dataset = train_dataset
-        self.test_dataset = test_dataset
-        self.val_dataset = val_dataset
 
         self.data_loader_kwargs = {
             **data_loader_kwargs,
