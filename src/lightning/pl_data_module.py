@@ -1,10 +1,10 @@
-import pickle
 import os
+import pickle
 from typing import Optional, Union
 
-import numpy as np
 # import pytorch_lightning as pl
 import lightning as pl
+import numpy as np
 import torch
 from sklearn.model_selection import StratifiedShuffleSplit
 from torch.utils.data import DataLoader, Dataset, Subset
@@ -20,11 +20,11 @@ class PlDataModule(pl.LightningDataModule):
         batch_size: int = 128,
         num_workers: int = 10,
         pin_memory: bool = True,
-        shuffle: bool = True,
+        shuffle: bool = False,
         persistent_workers: bool = True,
         stratify: Optional[bool] = False,
         stratification_labels: Optional[torch.Tensor] = None,
-        use_cache: bool = True,
+        use_cache: bool = False,
         drop_last: bool = True,
         train_dataset: Union[torch.utils.data.Dataset, None] = None,
         test_dataset: Union[torch.utils.data.Dataset, None] = None,
@@ -117,21 +117,15 @@ class PlDataModule(pl.LightningDataModule):
         return DataLoader(self.train_dataset, **self.data_loader_kwargs)
 
     def val_dataloader(self):
-        return DataLoader(
-            self.val_dataset, **{**self.data_loader_kwargs, "shuffle": False}
-        )
+        return DataLoader(self.val_dataset, **{**self.data_loader_kwargs})
 
     def test_dataloader(self):
         # return DataLoader(self.test_data, **self.data_loader_kwargs)
-        return DataLoader(
-            self.test_dataset, **{**self.data_loader_kwargs, "shuffle": False}
-        )
+        return DataLoader(self.test_dataset, **{**self.data_loader_kwargs})
 
     def predict_dataloader(self):
         # TODO: remove the proxy
-        return DataLoader(
-            self.test_dataset, **{**self.data_loader_kwargs, "shuffle": False}
-        )
+        return DataLoader(self.test_dataset, **{**self.data_loader_kwargs})
 
     def _create_idx(self):
         # stage option is not used here
