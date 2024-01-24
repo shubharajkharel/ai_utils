@@ -52,7 +52,7 @@ class PlDataModule(pl.LightningDataModule):
             "pin_memory": pin_memory,  # faster transfer to GPU
             "shuffle": shuffle,  # reshuffle at every epoch
             # "persistent_workers": persistent_workers,  # keep workers alive
-            "drop_last": True,  # drop last batch if smaller than batch_size
+            "drop_last": drop_last,  # drop last batch if smaller than batch_size
         }
 
         if (
