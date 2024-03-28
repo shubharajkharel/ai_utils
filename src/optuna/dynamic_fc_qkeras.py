@@ -1,12 +1,23 @@
 from typing import List
 
 from qkeras import QDense, quantized_bits
-from tensorflow.keras import Model
-from tensorflow.keras.layers import Activation, Concatenate, Input, Reshape
-from tensorflow.keras.models import Sequential
+from tensorflow import keras
+from keras.layers import Dense, Flatten, Activation
+from keras.models import Sequential
+from keras.optimizers import Adam
+from keras.utils import to_categorical
+from keras import Model
 
-from utils.src.optuna.nn_config import (FeedForwardNNConfig, Neuron,
-                                        NeuronLayer, QuantizationConfig)
+# from tensorflow.keras import Model
+# from tensorflow.keras.layers import Activation, Concatenate, Input, Reshape
+# from tensorflow.keras.models import Sequential
+
+from src.utils.src.optuna.nn_config import (
+    FeedForwardNNConfig,
+    Neuron,
+    NeuronLayer,
+    QuantizationConfig,
+)
 
 
 # Function to generate QDense layer with quantization
@@ -75,12 +86,13 @@ if __name__ == "__main__":
         output_quantization=8,
     )
     print(model.summary())
-    
-    
+
     from pprint import pprint
+
     for layer in model.layers:
-        if isinstance(layer, QDense):  # Or whatever quantized layer you're interested in
+        if isinstance(
+            layer, QDense
+        ):  # Or whatever quantized layer you're interested in
             pprint(f"Layer {layer.name}:")
             pprint(f"  Kernel Quantizer: {layer.kernel_quantizer}")
             pprint(f"  Bias Quantizer: {layer.bias_quantizer}")
-
