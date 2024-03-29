@@ -13,6 +13,9 @@ def heatmap_of_lines(
     cmap="jet",
     norm: matplotlib.colors.Normalize = LogNorm(),
     aspect=0.618,  # golden ratio
+    x_ticks=None,
+    y_ticks=None,
+    **kwargs,
 ):
     """
     Generate a heatmap from multiple lines of data.
@@ -39,6 +42,13 @@ def heatmap_of_lines(
         norm=norm,
         aspect=aspect,
     )
+    if x_ticks is not None:
+        x_ticks_pos = np.linspace(0, width, len(x_ticks))
+        colorbar.axes.xaxis.set_ticks(x_ticks_pos, x_ticks)
+    if y_ticks is not None:
+        y_ticks_pos = np.linspace(0, height, len(y_ticks))
+        colorbar.axes.yaxis.set_ticks(y_ticks_pos, y_ticks)
+
     return colorbar
 
 
