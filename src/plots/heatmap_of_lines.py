@@ -3,7 +3,7 @@ from typing import Literal, Union
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import LogNorm
+from matplotlib.colors import LogNorm, NoNorm, PowerNorm
 
 
 def heatmap_of_lines(
@@ -15,7 +15,6 @@ def heatmap_of_lines(
     aspect=0.618,  # golden ratio
     x_ticks=None,
     y_ticks=None,
-    **kwargs,
 ):
     """
     Generate a heatmap from multiple lines of data.
@@ -27,14 +26,16 @@ def heatmap_of_lines(
     # initialize heatmap to zeros
     width = data.shape[1]
     height = width if height == "same" else height
-    heatmap = np.zeros((width, height))
 
-    # compute heatmap values
-    temp_data = (data - data.min()) / (data.max() - data.min())
-    x_idx = np.floor(temp_data * width).astype(int) - 1
-    y_idx = np.array([np.arange(width)] * temp_data.shape[0]) - 1
-    for i, j in zip(x_idx, y_idx):
-        heatmap[i, j] += 1
+    heatmap = np.zeros((width, height))
+    max_val = data.max()
+    max_val *= 1.1  # add some padding
+    for l in data:
+        for x_idx, y_val in enumerate(l):
+            y_idx = y_val / max_val * height
+            y_idx = y_idx.astype(int)
+            y_idx = np.clip(y_idx, 0, height - 1)
+            heatmap[y_idx, x_idx] += 1
     colorbar = ax.imshow(
         heatmap,
         origin="lower",
@@ -42,6 +43,7 @@ def heatmap_of_lines(
         norm=norm,
         aspect=aspect,
     )
+
     if x_ticks is not None:
         x_ticks_pos = np.linspace(0, width, len(x_ticks))
         colorbar.axes.xaxis.set_ticks(x_ticks_pos, x_ticks)
