@@ -4,7 +4,8 @@ from .nn_config import (
     NeuronLayer,
     Neuron,
 )
-from utils.src.lightning.pl_module import PLModule
+
+from src.utils.src.lightning.pl_module import PLModule
 from typing import List
 
 
